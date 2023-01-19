@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "Tombola",
+			"path": "../../tombola"
+		},
+		{
+			"name": "Console App",
+			"path": "../../consoleApp"
+		}
+	]
+}
