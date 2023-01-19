@@ -58,12 +58,12 @@ runcmd:
   - sudo apt-get install -y git zsh fonts-powerline
   - git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/dev/powerlevel10k
   - echo 'source /home/dev/powerlevel10k/powerlevel10k.zsh-theme' >>/home/dev/.zshrc
-  - echo 'cd /home/dev/codebase' >>/home/dev/.zshrc
+  - echo 'cd /home/dev/ioet-tombola' >>/home/dev/.zshrc
   - cd /home/dev
   - git clone https://github.com/ioet/ioet-tombola.git
   - wget -O vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-arm64"
   - sudo dpkg -i vscode.deb
   - rm vscode.deb
   - sudo apt install -y -f
-  - cat /home/dev/ioet-tombola/local_dev_env/.vscode/extensions | while read in; do code --install-extension "$in"; done 
+  - cat /home/dev/ioet-tombola/local_dev_env/vscode_settings/extensions | while read in; do code --install-extension "$in"; done
   - sudo chown -R dev /home/dev/

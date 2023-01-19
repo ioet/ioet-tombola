@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "Tombola",
+			"path": "./tombola"
+		},
+		{
+			"name": "Console App",
+			"path": "./consoleApp"
+		}
+	],
+	"settings": {
+		"jest.disabledWorkspaceFolders": [
+			"Console App"
+		]
+	}
+}

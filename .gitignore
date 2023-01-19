@@ -1,6 +1,6 @@
-.vscode/
-tombola/node_modules/
-consoleApp/node_modules/
-tombola/dist/
 consoleApp/build/
+consoleApp/node_modules/
+
+tombola/node_modules/
+tombola/dist/
 
