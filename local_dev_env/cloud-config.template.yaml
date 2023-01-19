@@ -1,0 +1,69 @@
+#cloud-config
+users:
+  - default
+  - name: dev
+    groups: sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    home: /home/dev
+    shell: /usr/bin/zsh
+    ssh-authorized-keys:
+      - <authorized_keys>
+write_files:
+- owner: dev:dev
+  path: /home/dev/update_host
+  permissions: '0775'
+  content: |
+    #!/usr/bin/python3
+    import sys
+
+
+    def remove_older_host(config_lines: list) -> list:
+      tombola_config_start = config_lines.index('Host tombola-dev')
+      return config_lines[:tombola_config_start] + config_lines[tombola_config_start + 3:]
+
+
+    def add_new_host(config_lines: list, ip: str) -> list:
+      return config_lines + ['Host tombola-dev', f'  HostName {ip}', '  User dev']
+
+
+    def split_hosts(config_lines: list) -> list:
+      first_element = True
+      updated_config = []
+
+      for line in config_lines:
+        if line.startswith('Host ') and first_element:
+          first_element = False
+        elif line.startswith('Host ') and not first_element:
+          updated_config.append('')
+        updated_config.append(line)
+
+      return updated_config
+
+
+    if __name__ == '__main__':
+      config_lines = sys.argv[1].splitlines()
+      updated_config = remove_older_host(config_lines)
+      clean_config = [line for line in updated_config if line]
+      updated_config = add_new_host(clean_config, sys.argv[-1])
+      updated_config = split_hosts(updated_config)
+      print('\n'.join(updated_config) + '\n')
+
+runcmd:
+  - mkdir -p /home/dev/.oh-my-zsh
+  - mkdir -p /home/dev/.ssh
+  - sudo apt-get update
+  - curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  - sudo apt-get install nodejs
+  - sudo apt-get install -y git zsh fonts-powerline
+  - git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/dev/powerlevel10k
+  - echo 'source /home/dev/powerlevel10k/powerlevel10k.zsh-theme' >>/home/dev/.zshrc
+  - echo 'cd /home/dev/codebase' >>/home/dev/.zshrc
+  - cd /home/dev
+  - git clone https://github.com/ioet/ioet-tombola.git
+  - wget -O vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-arm64"
+  - sudo dpkg -i vscode.deb
+  - rm vscode.deb
+  - sudo apt install -y -f
+  - cat /home/dev/ioet-tombola/local_dev_env/.vscode/extensions | while read in; do code --install-extension "$in"; done 
+  - sudo chown -R dev /home/dev/
